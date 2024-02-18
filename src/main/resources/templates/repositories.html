@@ -4,6 +4,28 @@
     <meta charset="UTF-8">
     <title>Главная страница</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <style>
+        body {
+            padding-top: 70px;
+        }
+        h1 {
+            margin-bottom: 30px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        a {
+            color: #337ab7;
+            text-decoration: none;
+        }
+        a:hover {
+            color: #23527c;
+        }
+    </style>
 </head>
 
 <body>
@@ -46,10 +68,17 @@
 
 <br><br><br><br>
 <div class="container">
+    <h1>My GitHub Repositories</h1>
+    <ul>
+        <li th:each="repository : ${repositories}">
+            <a th:href="@{${repository.url}}" th:text="${repository.name}"></a>
 
+        </li>
+    </ul>
 
 </div>
 <input type="hidden" th:name="${_csrf.parameterName}"
        th:value="${_csrf.token}" />
 </body>
 </html>
+

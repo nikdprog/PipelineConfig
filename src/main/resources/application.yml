@@ -11,14 +11,11 @@ spring:
     open-in-view: false
     generate-ddl: true
 
+
 security:
   oauth2:
     client:
-      clientId: 1708aacd6f7de758a8cf
-      clientSecret: bde7ceace2af0cfb72be82a9552f43e5f5824934
-      accessTokenUri: https://github.com/login/oauth/access_token
-      userAuthorizationUri: https://github.com/login/oauth/authorize
-      clientAuthenticationScheme: form
-    resource:
-      user-info-uri: https://api.github.com/user
-      prefer-token-info: false
+      registration:
+        github:
+          clientId: 1708aacd6f7de758a8cf
+          clientSecret: bde7ceace2af0cfb72be82a9552f43e5f5824934

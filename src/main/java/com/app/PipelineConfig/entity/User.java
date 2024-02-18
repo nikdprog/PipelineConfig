@@ -1,6 +1,8 @@
 package com.app.PipelineConfig.entity;
 
 import jakarta.persistence.*;
+
+import java.security.Principal;
 import java.util.Collection;
 
 @Entity
