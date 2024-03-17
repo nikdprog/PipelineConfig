@@ -32,7 +32,6 @@ public class RegistrationController {
     @PostMapping
     public String registerUserAccount(@ModelAttribute("user")
                                       UserRegistrationDto registrationDto) {
-
         try {
             userService.save(registrationDto);
         }catch(Exception e)

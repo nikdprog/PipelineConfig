@@ -4,42 +4,7 @@
     <meta charset="UTF-8">
     <title>Главная страница</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <style>
-        body {
-            padding-top: 70px;
-        }
-        h1 {
-            margin-bottom: 30px;
-        }
 
-        a {
-            color: #337ab7;
-            text-decoration: none;
-        }
-        a:hover {
-            color: #23527c;
-        }
-        .repository-card {
-            background-color: #DCDCDC;
-            padding: 15px;
-            border-radius: 5px;
-            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-            margin-bottom: 15px;
-        }
-        .repository-name {
-            font-weight: bold;
-            color: #333;
-            font-size: 20px;
-            margin-bottom: 5px;
-        }
-        .repository-language {
-            color: #666;
-            margin-bottom: 10px;
-        }
-        .repository-link:hover {
-            color: #23527c;
-        }
-    </style>
 </head>
 
 <body>
@@ -59,9 +24,13 @@
                 Pipeline CI/CD configuration application</a>
         </div>
         <ul class="nav navbar-nav">
-            <li><a th:href="@{/indexPage}" th:text=Home></a></li>
-            <li class="active"><a th:href="@{/repositories}" th:text=Repositories></a></li>
-            <li><a th:href="@{/indexPage}" th:text=Page2></a></li>
+            <li class="active"><a href="#">
+                Home
+            </a></li>
+
+            <!-- !!!!!!!!!!!!!!!!!!!! -->
+            <li><a th:href="@{/repositories}" th:text=Repositories></a></li>
+            <li><a href="#">Page 2</a></li>
             <li><a href="#">Page 3</a></li>
         </ul>
         <div id="navbar" class="collapse navbar-collapse">
@@ -76,8 +45,6 @@
                     </form>
                 </li>
 
-
-
                 <!--
                 <li sec:authorize="isAuthenticated()">
                     <a href="#" class="dropdown-toggle"><span sec:authentication="principal.username"></span></a>
@@ -90,16 +57,8 @@
 
 <br><br><br><br>
 <div class="container">
-    <h1>My GitHub Repositories</h1>
 
-    <div th:each="repository : ${repositories}" class="repository-card">
-        <div class="repository-name">
-            <a th:href="@{/repository/{repositoryName}(repositoryName=${repository.name})}" th:text="${repository.name}"></a>
-        </div>
 
-        <div class="repository-language" th:text="${repository.language}"></div>
-    </div>
-    </div>
 </div>
 <input type="hidden" th:name="${_csrf.parameterName}"
        th:value="${_csrf.token}" />
