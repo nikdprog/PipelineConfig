@@ -27,5 +27,50 @@ public class Pipeline {
 
     @Column(name="text")
     private String text;
+
+    @Column(name="stages")
+    private String[] stages;
+
+    public void setStages(String[] stages) {
+        this.stages = stages;
+    }
+
+    public String getBuildSystem() {
+        return buildSystem;
+    }
+    public String[] getStages() {
+        return stages;
+    }
     //  статус??
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setRepository(RepositoryEntity repositoryEntity) {
+        this.repository = repositoryEntity;
+    }
+
+    public RepositoryEntity getRepository() {
+        return repository;
+    }
+    public void setLanguageVersion(String languageVersion) {
+        this.languageVersion = languageVersion;
+    }
+
+    public void setBuildSystem(String buildSystem) {
+        this.buildSystem = buildSystem;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
 }

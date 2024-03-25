@@ -1,62 +1,53 @@
 package com.app.PipelineConfig.controllers;
 
+import com.app.PipelineConfig.entity.Pipeline;
+import com.app.PipelineConfig.entity.RepositoryEntity;
+import com.app.PipelineConfig.service.PipelineJPA;
+import com.app.PipelineConfig.service.RepositoryJPA;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.List;
+
 @Controller
 public class RepositoryViewController {
+    private final String operating_system = "windows-latest";
+    private static String repositoryName;
+    private RepositoryJPA repositoryJPA;
+    private  PipelineJPA pipelineJPA;
+    public RepositoryViewController(RepositoryJPA repositoryJPA, PipelineJPA pipelineJPA) {
+        this.repositoryJPA = repositoryJPA;
+        this.pipelineJPA = pipelineJPA;
+    }
 
     @GetMapping("/repository/{repositoryName}")
     public String viewRepository(@PathVariable String repositoryName, Model model) {
-        // подготовить метаданные и сформировать пайплайн.
-        /*
-        name: Build
-        on:
-        pull_request:
-            branches:
-                - '*'
-        push:
-            branches:
-                - 'master'
-        jobs:
-            build:
-            runs-on: windows-latest
-            steps:
-                - uses: actions/checkout@v1
-                - name: set up JDK 19
-                  uses: actions/setup-java@v1
-                  with:
-                    java-version: 1.17
-                - name: Maven Package
-                  run: mvn -B clean package -DskipTests  */
-        // рабочий вариант пайплайна
-        String pipeline = "name: Build\n" +
-                "        on:\n" +
-                "        pull_request:\n" +
-                "            branches:\n" +
-                "                - '*'\n" +
-                "        push:\n" +
-                "            branches:\n" +
-                "                - 'master'\n" +
-                "        jobs:\n" +
-                "            build:\n" +
-                "            runs-on: windows-latest\n" +
-                "            steps:\n" +
-                "                - uses: actions/checkout@v1\n" +
-                "                - name: set up JDK 19\n" +
-                "                  uses: actions/setup-java@v1\n" +
-                "                  with:\n" +
-                "                    java-version: 1.17\n" +
-                "                - name: Maven Package\n" +
-                "                  run: mvn -B clean package -DskipTests";
+        repositoryName = repositoryName;
+        RepositoryEntity repository = repositoryJPA.findByName(repositoryName);
+        String name_pipeline;
+        Long repository_id = repository.getId(); // +
+        System.out.println(repository_id);
+        String name = repository.getName();
+        String language = repository.getLanguage();
+        String language_version = "1.17";
+        String jdk_version = "19";
+        String trigger1 = "push";
+        String trigger2 = "pull_request";
+        System.out.println(repository.getLanguage());
+
+        List<Pipeline> lst = pipelineJPA.findByRepositoryId(repository_id);
+        for(Pipeline pipe : lst) {
+
+        }
 
         // Например, model.addAttribute("repositoryInfo", repositoryInfo);
         model.addAttribute("repository_name", repositoryName);
         //model.addAttribute("repository_language", repositoryLanguage);
+
+        model.addAttribute("pipelines", lst);
         return "repository_view";
     }
-
 }
 

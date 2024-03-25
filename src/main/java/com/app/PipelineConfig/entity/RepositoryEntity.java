@@ -12,6 +12,7 @@ public class RepositoryEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
     public User getUser() {
         return user;
     }
@@ -47,6 +48,9 @@ public class RepositoryEntity {
         this.language = language;
     }
 
+    public Long getId() {
+        return id;
+    }
     public String getName() { return name; }
     public String getUrl() { return url; }
     public String getLanguage() { return language; }

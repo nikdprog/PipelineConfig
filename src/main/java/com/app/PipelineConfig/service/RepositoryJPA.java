@@ -8,5 +8,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RepositoryJPA extends JpaRepository<RepositoryEntity, User> {
     boolean existsByNameAndUrl(String name, String url);
+    RepositoryEntity findByName(String name);
+    Long findIdByName(String name);
 }
 
