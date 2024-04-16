@@ -50,9 +50,10 @@ public class RepositoriesController {
 
     @GetMapping("/repositories")
     public String getRepositories(Model model, @AuthenticationPrincipal OAuth2User oauth2User, OAuth2AuthenticationToken oAuth2AuthenticationToken, HttpSession httpSession) throws IOException {
-
+        System.out.println(oAuth2AuthenticationToken.getAuthorities().toString());
         String accessToken = getAccess_token(oAuth2AuthenticationToken, "github");
 
+        httpSession.setAttribute("accessToken", accessToken);
         System.out.println(accessToken);
         GitHub github = GitHub.connectUsingOAuth(accessToken);
         // Получаем текущий аккаунт
@@ -61,14 +62,14 @@ public class RepositoriesController {
         System.out.println(userID);
         // Получаем все репозитории пользователя
         List<GHRepository> ghRepositories = github.getMyself().listRepositories().toList();
+
         String languages = ghRepositories.get(0).getLanguage();
 
         // добавляем в базу данных
-        // !!! сделать проверку на то, что записей нет в таблице
         for(GHRepository ghRepository : ghRepositories) {
             String name = ghRepository.getName();
             String url = ghRepository.getHtmlUrl().toString();
-            System.out.println(repositoryJPA.existsByNameAndUrl(name, url));
+            //System.out.println(repositoryJPA.existsByNameAndUrl(name, url));
             if(!repositoryJPA.existsByNameAndUrl(name, url)) {
                 String language_ = ghRepository.getLanguage();
                 System.out.println(name);

@@ -73,4 +73,7 @@ public class Pipeline {
         this.text = text;
     }
 
+    public String getText() {
+        return text;
+    }
 }

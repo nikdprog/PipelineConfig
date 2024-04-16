@@ -6,8 +6,6 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <title>View Repository</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="style1.css">
-
     <style>
         body {
             padding-top: 70px;
@@ -53,6 +51,10 @@
         .pipeline-actions {
             margin-left: 10px;
         }
+        textarea {
+            resize: vertical; /* Разрешить растягивание только по вертикали */
+            min-height: 210px; /* Установить минимальную высоту поля */
+        }
         }
     </style>
 
@@ -94,7 +96,7 @@
         </div>
         <!-- Кнопки редактирования и удаления -->
         <div class="pipeline-actions">
-            <button onclick="editPipeline('${pipeline.id}')" class="btn btn-primary">Edit</button>
+            <button class="editPipelineButton btn btn-primary" th:attr="data-id=${pipeline.id}">Edit</button>
             <button onclick="deletePipeline('${pipeline.id}')" class="btn btn-danger">Delete</button>
         </div>
     </div>
@@ -142,6 +144,50 @@
 
     </div>
 </div>
+
+<!-- Модальное окно для редактирования пайплайна -->
+<div id="editPipelineModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Содержимое модального окна -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Edit pipeline</h4>
+            </div>
+            <div class="modal-body">
+                <!-- Форма для ввода данных пайплайна -->
+                <form id="pipelineFormEdit" data-repository-name="${repository_name}">
+                    <div class="form-group">
+                        <label for="pipelineName">Pipeline Name:</label>
+                        <input type="text" class="form-control" id="pipelineNameEdit">
+                    </div>
+                    <div class="form-group"> <!-- текстовое поле для редактирования текста пайплайна -->
+                        <label for="pipelineTextEdit">text of pipeline:</label>
+                        <textarea class="form-control" id="pipelineTextEdit" rows></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="trigger">Trigger:</label>
+                        <input type="text" class="form-control" id="triggerEdit">
+                    </div>
+                    <div class="form-group">
+                        <label>Stages:</label><br>
+                        <label><input type="checkbox" name="stagesEdit" value="build"> Build</label><br>
+                        <label><input type="checkbox" name="stagesEdit" value="test"> Test</label><br>
+                        <label><input type="checkbox" name="stagesEdit" value="deploy"> Deploy</label>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="editPipeline()">Edit</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- -->
+
 <!-- Подключение jQuery -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
@@ -155,45 +201,157 @@
         $('#createPipelineModal').modal('show');
     });
 
+    var pipelineId = 0;
+    $(document).on('click', '.editPipelineButton', function() {
+        pipelineId = $(this).data('id');
+        //var pipelineId = article.dataset.id;
+        var pipeline;
+        console.log('pipelineId: ' + pipelineId);
+
+        console.log('getting information about pipeline');
+        $.ajax({
+            url: '/api/v1/user', // URL для отправки запроса на сервер
+            type: 'GET',
+            data: {
+                pipelineId: pipelineId
+            },
+            success: function(response) {
+                // Обработка успешного ответа от сервера
+                console.log('Pipeline info:', response);
+                pipeline = response;
+                console.log(pipeline)
+                console.log(pipeline.name);
+                console.log(pipeline.stages[0]);
+                $('#pipelineNameEdit').val(pipeline.name);
+
+
+                $('#pipelineTextEdit').val(pipeline.text); // устанавливаем значение текстового поля
+                $('input[name="stagesEdit"]').prop('checked', false); // сброс всех чекбоксов
+                pipeline.stages.forEach(function(stage) {
+                    $('input[name="stagesEdit"][value="' + stage + '"]').prop('checked', true);
+                });
+
+            },
+            error: function(xhr, status, error) {
+                // Обработка ошибок
+                console.error('Error while getting pipeline info:', error);
+            }
+        });
+
+        //var pipeline = getPipelineById(pipelineId); // Получаем информацию о пайплайне по его идентификатору (это ваша функция для получения пайплайна по ID)
+
+        // Заполните модальное окно данными о пайплайне для редактирования
+
+        // $('#triggerEdit').val(pipeline.trigger);
+        // Добавьте другие поля, если необходимо
+
+        // Открываем модальное окно редактирования пайплайна
+        $('#editPipelineModal').modal('show');
+    });
+
+
+
+   // функция для обработки данных редактирования пайплайна
+   function editPipeline() {
+        console.log('editing pipeline');
+        console.log(pipelineId);
+        var repositoryName = $('#span1').text();
+        var pipelineName = $('#pipelineNameEdit').val();
+        var trigger = $('#triggerEdit').val();
+        var text_of_pipeline = $('#pipelineTextEdit').val();
+        var stages = $('input[name="stagesEdit"]:checked').map(function() {
+            return this.value;
+        }).get();
+        console.log(text_of_pipeline);
+        // Отправляем AJAX-запрос на сервер
+
+        $.ajax({
+            url: '/editPipeline', // Формируем URL с помощью repositoryName
+            type: 'POST',
+            data: {
+                pipelineId: pipelineId,
+                repositoryName: repositoryName,
+                pipelineName: pipelineName,
+                text_of_pipeline: text_of_pipeline,
+                trigger: trigger,
+                stages: stages
+            },
+            success: function(response) {
+                // Обработка успешного ответа от сервера
+                console.log('Pipeline edited successfully!');
+                $('#editPipelineModal').modal('hide'); // Закрываем модальное окно
+                location.reload();
+            },
+            error: function(xhr, status, error) {
+                // Обработка ошибок
+                console.log(status);
+                console.error('Error while saving pipeline:', error);
+            }
+        });
+
+   }
+
+
     // Функция для сохранения пайплайна
    function savePipeline() {
-    console.log('saving');
-    // Собираем данные из формы
-    var pipelineName = $('#pipelineName').val();
-    var trigger = $('#trigger').val();
-    var stages = $('input[name="stages"]:checked').map(function() {
-        return this.value;
-    }).get();
-    console.log(stages);
-    // Получаем repositoryName из атрибута data-repository-name
+        console.log('saving');
+        // Собираем данные из формы
+        var pipelineName = $('#pipelineName').val();
+        var trigger = $('#trigger').val();
+        var stages = $('input[name="stages"]:checked').map(function() {
+            return this.value;
+        }).get();
+        console.log(stages);
+        // Получаем repositoryName из атрибута data-repository-name
 
-    var el = document.getElementById('span1').value;
-    var repositoryName = $('#span1').text()
-    console.log(repositoryName);
+        var el = document.getElementById('span1').value;
+        var repositoryName = $('#span1').text();
+        console.log(repositoryName);
 
-    // Отправляем AJAX-запрос на сервер
+        // Отправляем AJAX-запрос на сервер
+        $.ajax({
+            url: '/api/v1/user', // Формируем URL с помощью repositoryName
+            type: 'POST',
+            data: {
+                repositoryName: repositoryName,
+                pipelineName: pipelineName,
+                trigger: trigger,
+                stages: stages
+            },
+            success: function(response) {
+                // Обработка успешного ответа от сервера
+                console.log('Pipeline saved successfully!');
+                $('#createPipelineModal').modal('hide'); // Закрываем модальное окно
+                location.reload();
+            },
+            error: function(xhr, status, error) {
+                // Обработка ошибок
+                console.log(status);
+                console.error('Error while saving pipeline:', error);
+            }
+        });
+    }
+
+    function deletePipeline(pipelineId) {
+    // Отправляем AJAX-запрос на сервер для удаления пайплайна
     $.ajax({
-        url: '/api/v1/user', // Формируем URL с помощью repositoryName
-        type: 'POST',
+        url: '/api/v1/user/pipelines',
+        type: 'DELETE',
         data: {
-            repositoryName: repositoryName,
-            pipelineName: pipelineName,
-            trigger: trigger,
-            stages: stages
+            pipelineId: pipelineId,
         },
         success: function(response) {
             // Обработка успешного ответа от сервера
-            console.log('Pipeline saved successfully!');
-            $('#createPipelineModal').modal('hide'); // Закрываем модальное окно
+            console.log('Pipeline deleted successfully!');
+            // Обновляем страницу для отображения обновленного списка пайплайнов
             location.reload();
         },
         error: function(xhr, status, error) {
             // Обработка ошибок
-            console.log(status);
-            console.error('Error while saving pipeline:', error);
+            console.error('Error while deleting pipeline:', error);
         }
     });
-}
+    }
 </script>
 
 </body>

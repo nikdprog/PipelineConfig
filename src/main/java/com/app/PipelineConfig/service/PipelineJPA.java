@@ -9,5 +9,8 @@ import java.util.List;
 
 public interface PipelineJPA extends JpaRepository<Pipeline, User> {
     List<Pipeline> findAll();
+    Pipeline findById(Long id);
     List<Pipeline> findByRepositoryId(Long id);
+    void delete(Pipeline entity);
+    //void update(Pipeline entity);
 }

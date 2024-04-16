@@ -15,7 +15,13 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.client.authentication.OAuth2LoginAuthenticationProvider;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
+import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
+import org.springframework.security.oauth2.core.oidc.IdTokenClaimNames;
 import org.springframework.security.web.SecurityFilterChain;
 
 import java.io.IOException;
@@ -73,6 +79,29 @@ public class SecurityConfiguration {
                 .defaultSuccessUrl("/repositories");
         return http.build();
     }
+    /*
+    @Bean
+    public ClientRegistrationRepository clientRegistrationRepository() {
+        return new InMemoryClientRegistrationRepository(gitHubClientRegistration());
+    }
+
+    private ClientRegistration gitHubClientRegistration() {
+        return ClientRegistration.withRegistrationId("github")
+                .clientId("1708aacd6f7de758a8cf")
+                .clientSecret("bde7ceace2af0cfb72be82a9552f43e5f5824934")
+                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+                .redirectUri("http://localhost:8080/login/oauth2/code/github")
+                .scope("read:user", "repo", "workflow")
+                .authorizationUri("https://github.com/login/oauth/authorize")
+                .tokenUri("https://github.com/login/oauth/access_token")
+                .userInfoUri("https://api.github.com/user")
+                .userNameAttributeName(IdTokenClaimNames.SUB)
+                .clientName("GitHub")
+                .build();
+    }
+
+     */
     @Autowired
     private CustomeOAuth2UserService userService;
 
