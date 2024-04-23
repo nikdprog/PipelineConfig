@@ -31,6 +31,17 @@ public class Pipeline {
     @Column(name="stages")
     private String[] stages;
 
+    @Column(name="status")
+    private String status;
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
     public void setStages(String[] stages) {
         this.stages = stages;
     }

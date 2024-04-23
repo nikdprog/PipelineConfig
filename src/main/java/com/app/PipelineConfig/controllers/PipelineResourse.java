@@ -7,10 +7,7 @@ import com.app.PipelineConfig.service.PipelineJPA;
 import com.app.PipelineConfig.service.PipelineService;
 import com.app.PipelineConfig.service.RepositoryJPA;
 import jakarta.servlet.http.HttpSession;
-import org.kohsuke.github.GHFileNotFoundException;
-import org.kohsuke.github.GHRepository;
-import org.kohsuke.github.GitHub;
-import org.kohsuke.github.GitHubBuilder;
+import org.kohsuke.github.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -108,14 +105,19 @@ public class PipelineResourse {
                         .path(".github/workflows/dummy-file.txt")
                         .content("")
                         .commit();
+                System.out.println(".github/workflows folder created successfully.");
             }
-             repositoryGitHub.createContent()
-                      .content(text_pipeline)
-                      .message("Add workflow file")
-                      .path(filePath)
-                      .sha(headSha)
-                      .commit();
 
+            try {
+                repositoryGitHub.getDirectoryContent(".github/workflows/" + pipelineName + ".yml");
+            } catch (GHFileNotFoundException e) {
+                repositoryGitHub.createContent()
+                        .content(text_pipeline)
+                        .message("Add workflow file")
+                        .path(filePath)
+                        .sha(headSha)
+                        .commit();
+            }
             Pipeline pipeline = new Pipeline();
 
             pipeline.setName(pipelineName);

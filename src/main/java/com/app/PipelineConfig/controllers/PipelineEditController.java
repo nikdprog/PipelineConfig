@@ -29,18 +29,18 @@ public class PipelineEditController {
     }
 
     @PostMapping
-    public ResponseEntity<?> editPipeline(Model model, @RequestParam String repositoryName, @RequestParam String pipelineName,
-                                          @RequestParam String trigger, @RequestParam(value="stages[]") String[] stages,
+    public ResponseEntity<?> editPipeline(Model model, @RequestParam String repositoryName, @RequestParam String pipelineName
+                                          /*@RequestParam String trigger*/, /*@RequestParam(value="stages[]") String[] stages,*/
                                           @RequestParam String text_of_pipeline, @RequestParam Long pipelineId, HttpSession httpSession) {
         System.out.println("hello");
         System.out.println(pipelineId);
         System.out.println(repositoryName);
         System.out.println(text_of_pipeline);
         System.out.println(pipelineName);
-        System.out.println(trigger);
-        for(String stage : stages) {
-            System.out.println(stage);
-        }
+        //System.out.println(trigger);
+        //for(String stage : stages) {
+        //    System.out.println(stage);
+        //}
         Optional<Pipeline> pipelineOptional = Optional.ofNullable(pipelineJPA.findById(pipelineId));
         Pipeline pipeline = pipelineOptional.get();
         pipeline.setName(pipelineName);

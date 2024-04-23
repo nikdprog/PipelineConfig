@@ -55,6 +55,25 @@
             resize: vertical; /* Разрешить растягивание только по вертикали */
             min-height: 210px; /* Установить минимальную высоту поля */
         }
+        .pipeline-status {
+            color: #008000;
+            margin-bottom: 10px;
+        }
+
+        .pipeline-status.success {
+            background-color: green;
+        }
+
+        .pipeline-status.failure {
+            background-color: red;
+        }
+
+        .pipeline-status > .icon {
+            color: white;
+            font-size: 12px;
+            position: relative;
+            top: 2px;
+        }
         }
     </style>
 
@@ -93,11 +112,13 @@
             <div th:each="stage : ${pipeline.stages}" class="pipelines-stages">
                 <span th:text="${stage}"></span>
             </div>
+            <!-- <div class="pipeline-status" id="pipelineStatus" th:attr="data-id=${pipeline.id}" th:text="${pipeline.status}" th:class="${pipeline.status}"> </div> -->
+            <div class="pipeline-status" th:id="'pipelineStatus_' + ${pipeline.id}" th:attr="data-idp=${pipeline.id}" th:text="${pipeline.status}" th:class="${pipeline.status}"> </div>
         </div>
         <!-- Кнопки редактирования и удаления -->
         <div class="pipeline-actions">
             <button class="editPipelineButton btn btn-primary" th:attr="data-id=${pipeline.id}">Edit</button>
-            <button onclick="deletePipeline('${pipeline.id}')" class="btn btn-danger">Delete</button>
+            <button class="deletePipelineButton btn btn-danger" th:attr="onclick='deletePipeline(\'' + ${pipeline.id} + '\')'">Delete</button>
         </div>
     </div>
 
@@ -165,7 +186,7 @@
                         <label for="pipelineTextEdit">text of pipeline:</label>
                         <textarea class="form-control" id="pipelineTextEdit" rows></textarea>
                     </div>
-                    
+                    <!--
                     <div class="form-group">
                         <label for="trigger">Trigger:</label>
                         <input type="text" class="form-control" id="triggerEdit">
@@ -176,7 +197,7 @@
                         <label><input type="checkbox" name="stagesEdit" value="test"> Test</label><br>
                         <label><input type="checkbox" name="stagesEdit" value="deploy"> Deploy</label>
                     </div>
-
+                    -->
                 </form>
             </div>
             <div class="modal-footer">
@@ -196,6 +217,8 @@
 
 <!-- JavaScript код для открытия модального окна и обработки создания пайплайна -->
 <script>
+
+
     // Функция для открытия модального окна при нажатии на кнопку "Создать пайплайн"
     document.getElementById('createPipelineButton').addEventListener('click', function() {
         $('#createPipelineModal').modal('show');
@@ -204,6 +227,7 @@
     var pipelineId = 0;
     $(document).on('click', '.editPipelineButton', function() {
         pipelineId = $(this).data('id');
+
         //var pipelineId = article.dataset.id;
         var pipeline;
         console.log('pipelineId: ' + pipelineId);
@@ -231,12 +255,16 @@
                     $('input[name="stagesEdit"][value="' + stage + '"]').prop('checked', true);
                 });
 
+
+
             },
             error: function(xhr, status, error) {
                 // Обработка ошибок
                 console.error('Error while getting pipeline info:', error);
             }
         });
+
+
 
         //var pipeline = getPipelineById(pipelineId); // Получаем информацию о пайплайне по его идентификатору (это ваша функция для получения пайплайна по ID)
 
@@ -249,6 +277,29 @@
         $('#editPipelineModal').modal('show');
     });
 
+     /*
+     function getPipelines() {
+            var repositoryName = $('#span1').text();
+            $.ajax({
+                url: '/getPipelines', // Формируем URL с помощью repositoryName
+                type: 'GET',
+                data: {
+                    repositoryName: repositoryName
+                },
+                success: function(response) {
+                    // Обработка успешного ответа от сервера
+                    console.log('Pipelines get successfully!');
+                    console.log('response: ',response.name);
+                },
+                error: function(xhr, status, error) {
+                    // Обработка ошибок
+                    //console.log(status);
+                    console.error('Error while getting pipelines:', error);
+                }
+            });
+     }
+     */
+
 
 
    // функция для обработки данных редактирования пайплайна
@@ -257,11 +308,11 @@
         console.log(pipelineId);
         var repositoryName = $('#span1').text();
         var pipelineName = $('#pipelineNameEdit').val();
-        var trigger = $('#triggerEdit').val();
+        // var trigger = $('#triggerEdit').val();
         var text_of_pipeline = $('#pipelineTextEdit').val();
-        var stages = $('input[name="stagesEdit"]:checked').map(function() {
-            return this.value;
-        }).get();
+        // var stages = $('input[name="stagesEdit"]:checked').map(function() {
+        //     return this.value;
+        // }).get();
         console.log(text_of_pipeline);
         // Отправляем AJAX-запрос на сервер
 
@@ -272,9 +323,9 @@
                 pipelineId: pipelineId,
                 repositoryName: repositoryName,
                 pipelineName: pipelineName,
-                text_of_pipeline: text_of_pipeline,
-                trigger: trigger,
-                stages: stages
+                text_of_pipeline: text_of_pipeline
+                //trigger: trigger,
+                //stages: stages
             },
             success: function(response) {
                 // Обработка успешного ответа от сервера
@@ -323,6 +374,11 @@
                 console.log('Pipeline saved successfully!');
                 $('#createPipelineModal').modal('hide'); // Закрываем модальное окно
                 location.reload();
+
+                // Установка статуса пайплайна
+                //var pipelineStatusElement = $('#pipelineStatus_' + pipeline.id);
+                //pipelineStatusElement.text(pipeline.status);
+                //pipelineStatusElement.removeClass('failure success');
             },
             error: function(xhr, status, error) {
                 // Обработка ошибок
@@ -333,25 +389,76 @@
     }
 
     function deletePipeline(pipelineId) {
-    // Отправляем AJAX-запрос на сервер для удаления пайплайна
-    $.ajax({
-        url: '/api/v1/user/pipelines',
-        type: 'DELETE',
-        data: {
-            pipelineId: pipelineId,
-        },
-        success: function(response) {
-            // Обработка успешного ответа от сервера
-            console.log('Pipeline deleted successfully!');
-            // Обновляем страницу для отображения обновленного списка пайплайнов
-            location.reload();
-        },
-        error: function(xhr, status, error) {
-            // Обработка ошибок
-            console.error('Error while deleting pipeline:', error);
-        }
-    });
+        console.log("function of deleting");
+        var repositoryName = $('#span1').text();
+        //var pipelineId = $('#deletePipelineButton').data('idPipeline');
+        console.log('repName: ' + repositoryName);
+        console.log('pipeID: ' + pipelineId);
+        // Отправляем AJAX-запрос на сервер для удаления пайплайна
+        $.ajax({
+            url: '/pipelinesDelete',
+            type: 'POST',
+            data: {
+                pipelineId: pipelineId,
+                repositoryName: repositoryName
+            },
+            success: function(response) {
+                // Обработка успешного ответа от сервера
+                console.log('Pipeline deleted successfully!');
+                // Обновляем страницу для отображения обновленного списка пайплайнов
+                location.reload();
+            },
+            error: function(xhr, status, error) {
+                // Обработка ошибок
+                console.error('Error while deleting pipeline:', error);
+            }
+        });
     }
+
+
+
+    function updateAllPipelineStatus() {
+        //console.log('pipelineID:' + pipelineId);
+        $('.pipelines-card').each(function() {
+            //var element = document.querySelector('[data-idp]'); // +
+            var pipelineId = $(this).find('[data-idp]').data('idp');
+            //var pipelineId = element.dataset.idp; // +
+            console.log(pipelineId);
+            updatePipelineStatus(pipelineId);
+        });
+    }
+
+    function updatePipelineStatus(pipelineId) {
+        console.log('updatePipelineStatus');
+        var repositoryName = $('#span1').text();
+        var pipelineName = $('#pipelineName').val();
+        $.ajax({
+            url: '/getPipeline', // Укажите URL вашего эндпоинта для получения статуса пайплайна
+            type: 'GET',
+            data: {
+                pipelineId: pipelineId,
+                repositoryName: repositoryName,
+            },
+            success: function(response) {
+
+                // Обновление статуса пайплайна на странице
+                console.log('status: ' + response.status)
+                $('#pipelineStatus_' + pipelineId).text(response.status);
+                //$('#pipelineStatus').text(response.status);
+            },
+            error: function(xhr, status, error) {
+                // Обработка ошибок
+                console.error('Error while updating pipeline status:', error);
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        // Обновление статусов каждые 5 секунд (5000 миллисекунд)
+        setInterval(updateAllPipelineStatus, 6000);
+     });
+
+
 </script>
 
 </body>

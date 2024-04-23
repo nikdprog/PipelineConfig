@@ -18,7 +18,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Controller
@@ -61,12 +63,21 @@ public class RepositoriesController {
         Long userID = userService.getCurrentUserId(httpSession);
         System.out.println(userID);
         // Получаем все репозитории пользователя
-        List<GHRepository> ghRepositories = github.getMyself().listRepositories().toList();
+        //List<GHRepository> ghRepositories = github.getMyself().listRepositories().toList();
+        List<GHRepository> publicRepositories = new ArrayList<>();
 
-        String languages = ghRepositories.get(0).getLanguage();
+        // Отображаем публичные репозитории
+        for (GHRepository repository : github.getMyself().listRepositories()) {
+            // Проверяем, является ли репозиторий публичным
+            if (/*repository.getVisibility() == GHRepository.Visibility.PUBLIC && */ !Objects.equals(repository.getName(), "Student-Database-Management-System")) {
+                publicRepositories.add(repository);
+            }
+        }
+
+        String languages = publicRepositories.get(0).getLanguage();
 
         // добавляем в базу данных
-        for(GHRepository ghRepository : ghRepositories) {
+        for(GHRepository ghRepository : publicRepositories) {
             String name = ghRepository.getName();
             String url = ghRepository.getHtmlUrl().toString();
             //System.out.println(repositoryJPA.existsByNameAndUrl(name, url));
@@ -86,7 +97,7 @@ public class RepositoriesController {
         }
         // получить список зависимостей и используемых технологий
         // Преобразуем GHRepository в Repository
-        List<RepositoryEntity> repositories = ghRepositories.stream()
+        List<RepositoryEntity> repositories = publicRepositories.stream()
                 .map(repo -> new RepositoryEntity(repo.getName(), repo.getHtmlUrl().toString(), repo.getLanguage()))
                 .collect(Collectors.toList());
 
