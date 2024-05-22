@@ -71,6 +71,8 @@ public class RepositoryViewController {
                 System.out.println("Created at: " + run.getCreatedAt());
                 System.out.println("Updated at: " + run.getUpdatedAt());
 
+
+                //System.out.println("----" + run.listAllJobs().toList().get(0).getName());
                 //System.out.println("Logs URL: " + run.getLogsUrl());
                 System.out.println("-------------------------------------------------------");
                 //if(lst.get(k).getName() == run.getName()) {

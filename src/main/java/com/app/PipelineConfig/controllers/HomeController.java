@@ -1,23 +1,18 @@
 package com.app.PipelineConfig.controllers;
 
-import com.app.PipelineConfig.service.impl.UserServiceImpl;
-import com.app.PipelineConfig.userDetails.CustomUserDetails;
 import jakarta.servlet.http.HttpSession;
 import org.kohsuke.github.GitHub;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
-import java.security.Principal;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-//@SessionAttributes("username")
 public class HomeController {
 
     private OAuth2AuthorizedClientService oAuth2AuthorizedClientService;

@@ -6,23 +6,21 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <title>View Repository</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
     <style>
         body {
             padding-top: 70px;
-        }
-        h1 {
-            margin-bottom: 30px;
+            background-color: #202020; /* Темный фон */
+            color: #fff; /* Белый текст */
         }
 
-        a {
-            color: #337ab7;
-            text-decoration: none;
+        .navbar-inverse {
+            background-color: #333; /* Цвет навигационной панели */
+            border-color: #080808; /* Цвет рамки */
         }
-        a:hover {
-            color: #23527c;
-        }
+
         .pipelines-card {
-            background-color: #DCDCDC;
+            background-color: #333; /* Цвет фона карточки */
             padding: 15px;
             border-radius: 5px;
             box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
@@ -31,52 +29,142 @@
             justify-content: space-between;
             align-items: center;
         }
+
         .pipeline-info {
             flex-grow: 1;
+            margin-left: 90px;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
         }
+
         .pipeline-name {
             font-weight: bold;
-            color: #333;
+            color: #fff; /* Белый цвет текста */
             font-size: 20px;
             margin-bottom: 5px;
         }
+
         .pipeline-buildSystem {
-            color: #666;
+            display: inline-block;
+            color: #ccc; /* Серый цвет текста */
             margin-bottom: 10px;
         }
-        .pipeline-stages {
-            color: #666;
-            margin-bottom: 10px;
+
+         .pipeline-stages {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 10px 0; /* Добавить отступ для лучшего пространства */
+            width: 100%; /* Занимать всю ширину родительского контейнера */
         }
+
+        .pipeline-details {
+            display: flex;
+            align-items: center;
+            gap: 10px; /* Отступ между элементами */
+        }
+        .pipeline-stage {
+            background-color: #555;
+            padding: 5px 10px;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
         .pipeline-actions {
             margin-left: 10px;
+            gap: 10px;
         }
-        textarea {
+
+        .pipeline-status {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 20px;
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .pipeline-status.queued {
+            background-color: #ffa500; /* Оранжевый цвет для статуса "queued" */
+        }
+
+        .pipeline-status.in_progress {
+            background-color: #ff0000; /* Красный цвет для статуса "in_progress" */
+        }
+
+
+        .loader1 {
+            border: 16px solid #f3f3f3; /* Light grey */
+            border-top: 16px solid #3498db; /* Blue */
+            border-radius: 50%;
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .modal-content {
+            background-color: #333; /* Цвет фона модального окна */
+            color: #fff; /* Белый цвет текста в модальном окне */
+        }
+
+                /* Стили для полей ввода */
+
+        .modal-content label {
+            color: #fff; /* Белый цвет текста в полях ввода и метках */
+            background-color: #333; /* Цвет фона полей ввода */
+            font-weight: normal; /* Обычный (не жирный) шрифт */
+        }
+        .modal-content input[type="text"] {
+            color: #fff; /* Белый цвет текста в полях ввода и метках */
+            background-color: #202020; /* Цвет фона полей ввода */
+            border: 1px solid #ccc; /* Цвет рамки */
+            font-weight: normal; /* Обычный (не жирный) шрифт */
+        }
+        .modal-content input[type="checkbox"] {
+            color: #fff; /* Белый цвет текста в полях ввода и метках */
+            background-color: #202020; /* Цвет фона полей ввода */
+            border: 1px solid #ccc; /* Цвет рамки */
+            font-weight: normal; /* Обычный (не жирный) шрифт */
+        }
+        .modal-content textarea {
+            color: #fff; /* Белый цвет текста в полях ввода и метках */
+            background-color: #202020; /* Цвет фона полей ввода */
+            border: 1px solid #ccc; /* Цвет рамки */
+            font-weight: normal; /* Обычный (не жирный) шрифт */
             resize: vertical; /* Разрешить растягивание только по вертикали */
             min-height: 210px; /* Установить минимальную высоту поля */
         }
-        .pipeline-status {
-            color: #008000;
-            margin-bottom: 10px;
+
+        /* Добавляем зеленую галочку для статуса "completed" */
+        .complete {
+           width: 60px;
+           height: 60px;
+           border-radius: 50%;
+           position: absolute;
+           background-color: #008000; /* Зеленый цвет для статуса "completed" */
+           display: flex;
+           justify-content: center;
+           align-items: center;
         }
 
-        .pipeline-status.success {
-            background-color: green;
-        }
-
-        .pipeline-status.failure {
-            background-color: red;
-        }
-
-        .pipeline-status > .icon {
-            color: white;
-            font-size: 12px;
-            position: relative;
-            top: 2px;
-        }
+        /* Убираем остальные стили, которые могли быть применены ранее */
+        .complete::before {
+            content: "\2713"; /* Знак галочки */
+            font-size: 24px;
+            color: #fff; /* Белый цвет */
         }
     </style>
-
 </head>
 <body>
 <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -88,7 +176,7 @@
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav navbar-right">
                 <li>
-                    <a th:href="@{/repositories}">Back to Repositories</a>
+                    <a th:href="@{/repositories}">Назад к проектам</a>
                 </li>
             </ul>
         </div>
@@ -96,73 +184,67 @@
 </nav>
 
 <div class="container">
-    <!-- Здесь вы можете отобразить информацию о репозитории, например: -->
-    <h1><span id="span1" th:text="${repository_name}"></span></h1>
+    <h1>Проект: <span id="span1" th:text="${repository_name}"></span></h1>
     <form id="pipelineForm1">
         <!-- Остальные поля формы -->
     </form>
-    <h2>Repository Pipelines</h2>
-    <!-- Здесь отображается список пайплайнов -->
+    <h2>Пайплайны проекта</h2>
     <div th:each="pipeline : ${pipelines}" class="pipelines-card">
+        <div class="loader"></div>
         <div class="pipeline-info">
             <div class="pipeline-name">
                 <a th:text="${pipeline.name}"></a>
             </div>
-            <div class="pipeline-build" th:text="${pipeline.buildSystem}"></div>
-            <div th:each="stage : ${pipeline.stages}" class="pipelines-stages">
-                <span th:text="${stage}"></span>
+            <div class="pipeline-details">
+                <div class="pipeline-build" th:text="${pipeline.buildSystem}"></div>
+                <div class="pipeline-status" th:id="'pipelineStatus_' + ${pipeline.id}" th:attr="data-idp=${pipeline.id}" th:text="${pipeline.status}" th:class="${pipeline.status}"></div>
             </div>
-            <!-- <div class="pipeline-status" id="pipelineStatus" th:attr="data-id=${pipeline.id}" th:text="${pipeline.status}" th:class="${pipeline.status}"> </div> -->
-            <div class="pipeline-status" th:id="'pipelineStatus_' + ${pipeline.id}" th:attr="data-idp=${pipeline.id}" th:text="${pipeline.status}" th:class="${pipeline.status}"> </div>
+
+            <div class="pipeline-stages">
+                <div th:each="stage : ${pipeline.stages}" class="pipeline-stage" th:text="${stage}"></div>
+            </div>
         </div>
-        <!-- Кнопки редактирования и удаления -->
         <div class="pipeline-actions">
-            <button class="editPipelineButton btn btn-primary" th:attr="data-id=${pipeline.id}">Edit</button>
-            <button class="deletePipelineButton btn btn-danger" th:attr="onclick='deletePipeline(\'' + ${pipeline.id} + '\')'">Delete</button>
+            <button class="editPipelineButton btn btn-primary" th:attr="data-id=${pipeline.id}">Редактировать</button>
+            <button class="deletePipelineButton btn btn-danger" th:attr="onclick='deletePipeline(\'' + ${pipeline.id} + '\')'">Удалить</button>
         </div>
     </div>
-
-    <!-- Здесь добавлена кнопка для создания нового пайплайна -->
-    <button id="createPipelineButton" class="btn btn-success">Create Pipeline</button>
+    <button id="createPipelineButton" class="btn btn-success">Создать новый пайплайн</button>
 </div>
-
-
 
 <!-- Модальное окно для создания пайплайна -->
 <div id="createPipelineModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
-
         <!-- Содержимое модального окна -->
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Create New Pipeline</h4>
+                <h4 class="modal-title">Создать пайплайн</h4>
             </div>
             <div class="modal-body">
                 <!-- Форма для ввода данных пайплайна -->
                 <form id="pipelineForm" data-repository-name="${repository_name}">
                     <div class="form-group">
-                        <label for="pipelineName">Pipeline Name:</label>
+                        <label for="pipelineName">Название пайплайна:</label>
                         <input type="text" class="form-control" id="pipelineName">
                     </div>
                     <div class="form-group">
-                        <label for="trigger">Trigger:</label>
+                        <label for="trigger">Триггер:</label>
                         <input type="text" class="form-control" id="trigger">
                     </div>
                     <div class="form-group">
-                        <label>Stages:</label><br>
-                        <label><input type="checkbox" name="stages" value="build"> Build</label><br>
-                        <label><input type="checkbox" name="stages" value="test"> Test</label><br>
-                        <label><input type="checkbox" name="stages" value="deploy"> Deploy</label>
+                        <label>Этапы:</label><br>
+                        <label><input type="checkbox" name="stages" value="build"> Сборка</label><br>
+                        <label><input type="checkbox" name="stages" value="test"> Тестирование</label><br>
+                        <label><input type="checkbox" name="stages" value="deploy"> Развертывание</label>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" onclick="savePipeline()">Save</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="savePipeline()">Сохранить</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
             </div>
         </div>
-
     </div>
 </div>
 
@@ -173,17 +255,17 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Edit pipeline</h4>
+                <h4 class="modal-title">Редактировать пайплайн</h4>
             </div>
             <div class="modal-body">
                 <!-- Форма для ввода данных пайплайна -->
                 <form id="pipelineFormEdit" data-repository-name="${repository_name}">
                     <div class="form-group">
-                        <label for="pipelineName">Pipeline Name:</label>
+                        <label for="pipelineName">Название пайплайна:</label>
                         <input type="text" class="form-control" id="pipelineNameEdit">
                     </div>
                     <div class="form-group"> <!-- текстовое поле для редактирования текста пайплайна -->
-                        <label for="pipelineTextEdit">text of pipeline:</label>
+                        <label for="pipelineTextEdit">Текст пайплайна:</label>
                         <textarea class="form-control" id="pipelineTextEdit" rows></textarea>
                     </div>
                     <!--
@@ -201,21 +283,18 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" onclick="editPipeline()">Edit</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="editPipeline()">Редактировать</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
             </div>
         </div>
     </div>
 </div>
-<!-- -->
 
 <!-- Подключение jQuery -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
 <!-- Подключение Bootstrap JS -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-
-<!-- JavaScript код для открытия модального окна и обработки создания пайплайна -->
+<!-- JavaScript код -->
 <script>
 
 
@@ -440,10 +519,22 @@
                 repositoryName: repositoryName,
             },
             success: function(response) {
-
                 // Обновление статуса пайплайна на странице
                 console.log('status: ' + response.status)
                 $('#pipelineStatus_' + pipelineId).text(response.status);
+                //var iconElement = $('#pipelineStatus_' + pipelineId + '.icon');
+                var iconElement = $('.loader');
+                iconElement.removeClass(); // Удаление всех классов иконки
+                if (response.status === 'queued' || response.status === 'in_progress') {
+                    iconElement.removeClass(); // Удаление всех классов иконки
+                    iconElement.addClass('loader1'); // Иконка круга загрузки
+                } else if (response.status === 'completed') {
+                    iconElement.removeClass(); // Удаление всех классов иконки
+                    console.log('not updates')
+                    iconElement.addClass('complete');
+                    //iconElement.addClass('fas fa-check-circle'); // Иконка галочки
+                }
+
                 //$('#pipelineStatus').text(response.status);
             },
             error: function(xhr, status, error) {
@@ -454,12 +545,31 @@
     }
 
     $(document).ready(function() {
-        // Обновление статусов каждые 5 секунд (5000 миллисекунд)
-        setInterval(updateAllPipelineStatus, 6000);
+        setInterval(updateAllPipelineStatus, 500);
      });
 
+    function updateStagesInformation(pipelineId) {
+        console.log('updatePipelineStatus');
+        var repositoryName = $('#span1').text();
+        var pipelineName = $('#pipelineName').val();
+        $.ajax({
+            url: '/getPipeline', // Укажите URL вашего эндпоинта для получения статуса пайплайна
+            type: 'GET',
+            data: {
+                pipelineId: pipelineId,
+                repositoryName: repositoryName,
+            },
+            success: function(response) {
+
+
+            },
+            error: function(xhr, status, error) {
+                // Обработка ошибок
+                console.error('Error while updating pipeline status:', error);
+            }
+        });
+    }
 
 </script>
-
 </body>
 </html>
