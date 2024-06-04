@@ -2,22 +2,16 @@
 <html xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <title>Страница репозиториев</title>
+    <title>Страница подключения проектов</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <style>
         body {
-            padding-top: 70px;
+            background-color: #202020; /* Темный фон */
+            color: #fff; /* Белый текст */
         }
-        h1 {
-            margin-bottom: 30px;
-        }
-        a {
-            color: #337ab7;
-            text-decoration: none;
-        }
-        a:hover {
-            color: #23527c;
-        }
+        .navbar-inverse {
+            background-color: #333; /* Цвет навигационной панели */
+            border-color: #080808; /* Цвет рамки */
         }
     </style>
 </head>
@@ -36,13 +30,12 @@
                     </span>
             </button>
             <a class="navbar-brand">
-                Pipeline CI/CD configuration application</a>
+                Приложение для конфигурации CI/CD пайплайнов</a>
         </div>
         <ul class="nav navbar-nav">
-            <li><a th:href="@{/}" th:text=Home></a></li>
-            <li class="active"><a th:href="@{/repositories_connect}" th:text=Repositories></a></li>
-            <li><a th:href="@{/}" th:text=Page 2></a></li>
-            <li><a href="#">Page 3</a></li>
+            <li><a th:href="@{/}" th:text=Главная></a></li>
+            <li class="active"><a th:href="@{/repositories_connect}" th:text=Проекты></a></li>
+            <li><a href="#">О нас</a></li>
         </ul>
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav navbar-right">
@@ -50,17 +43,11 @@
                     <a href="#" class="dropdown-toggle"><span th:text="${username}"></span></a>
                 </li>
                 <li sec:authorize="isAuthenticated()">
-                    <a href="javascript: document.logoutForm.submit()" class="dropdown-toggle">Sign out</a>
+                    <a href="javascript: document.logoutForm.submit()" class="dropdown-toggle">Выйти</a>
                     <form name="logoutForm" th:action="@{/logout}" method="post" th:hidden="true">
                         <input hidden type="submit" value="Sign Out" />
                     </form>
                 </li>
-
-                <!--
-                <li sec:authorize="isAuthenticated()">
-                    <a href="#" class="dropdown-toggle"><span sec:authentication="principal.username"></span></a>
-                </li>
-                -->
             </ul>
         </div>
     </div>
@@ -68,9 +55,9 @@
 
 <br><br><br><br>
 <div class="container">
-    <h1>My GitHub Repositories</h1>
+    <h1>Мои проекты</h1>
     <div>
-        <h4><a th:href="@{/oauth2/authorization/github}">Подключите репозитории через Github</a></h4>
+        <h4><a th:href="@{/oauth2/authorization/github}">Подключите репозитории через GitHub</a></h4>
     </div>
     <!--
     <button class="github-button" data-provider="github" data-oauthserver="https://github.com/login/oauth/authorize" data-oauthversion="2.0">

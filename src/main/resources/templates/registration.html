@@ -4,6 +4,16 @@
     <meta charset="UTF-8">
     <title>Регистрация</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #202020;
+            color: #fff;
+        }
+        .navbar-inverse {
+            background-color: #333; /* Цвет навигационной панели */
+            border-color: #080808; /* Цвет рамки */
+        }
+    </style>
 </head>
 
 <body>
@@ -19,7 +29,7 @@
                     class="icon-bar"></span> <span class="icon-bar"></span>
             </button>
             <a class="navbar-brand">
-                Pipeline CI/CD configuration application</a>
+                Приложение для конфигурации CI/CD пайплайнов</a>
         </div>
     </div>
 </nav>
@@ -29,7 +39,6 @@
 <div class="container">
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
-
             <!-- success message -->
             <div th:if="${param.success}">
                 <div class="alert alert-info">You've successfully registered
@@ -40,14 +49,13 @@
                 <div class="alert alert-danger">
                     Email is Already Registered!</div>
             </div>
-
-            <h1>Registration</h1>
+            <h1>Регистрация</h1>
 
             <form th:action="@{/registration}" method="post"
                   th:object="${user}">
                 <div class="form-group">
                     <label class="control-label" for="firstName">
-                        First Name </label>
+                        Имя </label>
                     <input id="firstName" class="form-control"
                            th:field="*{firstName}" required
                            autofocus="autofocus" />
@@ -55,13 +63,13 @@
 
                 <div class="form-group">
                     <label class="control-label" for="lastName">
-                        Last Name </label> <input id="lastName"
+                        Фамилия </label> <input id="lastName"
                                                   class="form-control" th:field="*{lastName}"
                                                   required autofocus="autofocus" />
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label" for="email"> Email
+                    <label class="control-label" for="email"> Электронная почта
                     </label> <input id="email" class="form-control"
                                     th:field="*{email}" required autofocus="autofocus"
                 />
@@ -69,19 +77,18 @@
 
                 <div class="form-group">
                     <label class="control-label" for="password">
-                        Password </label> <input id="password"
+                        Пароль </label> <input id="password"
                                                  class="form-control" type="password"
                                                  th:field="*{password}" required
                                                  autofocus="autofocus" />
                 </div>
-
                 <div class="form-group">
                     <button type="submit" class="btn btn-primary">
-                        Register</button>
-                    <span>Already registered? <a href="/"
-                                                 th:href="@{/login}">Login
-                                here</a></span>
+                        Зарегистрироваться</button>
+
                 </div>
+                <span>Есть учетная запись? <a href="/"
+                                              th:href="@{/login}">Войдите здесь</a></span>
             </form>
         </div>
     </div>

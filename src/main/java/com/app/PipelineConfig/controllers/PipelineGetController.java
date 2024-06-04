@@ -6,8 +6,6 @@ import jakarta.servlet.http.HttpSession;
 import org.kohsuke.github.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -47,6 +45,7 @@ public class PipelineGetController {
                         latestUpdate = ghWorkflowRun.getUpdatedAt();
                         latestRun = ghWorkflowRun;
                     }
+
                 }
             }
 
@@ -55,6 +54,26 @@ public class PipelineGetController {
                 pipelines_updates.put(pipeline.getName(), latestUpdate); // Обновляем время последнего обновления в карте
                 pipeline.setStatus(latestRun.getStatus().toString()); // Устанавливаем статус пайплайна
                 System.out.println("Updated pipeline status: " + pipeline.getName() + " - " + pipeline.getStatus());
+                // Получение этапов и их статусов
+
+                String[] stages = pipeline.getStages();
+                for(String str : stages) {
+                    System.out.println(str);
+                }
+                int k = 0;
+                Map<String, String> stageStatuses = new LinkedHashMap<>();
+                for (GHWorkflowJob job : latestRun.listJobs()) {
+                    if(!Objects.equals(job.getName(), "prepare-environment")) {
+                        //stages[k] = job.getStatus().toString();
+                        //pipeline.getStageStatuses().put(stages[k], job.getStatus().toString());
+                        stageStatuses.put(job.getName(), job.getStatus().toString());
+                        System.out.println(job.getName() + ": " + job.getStatus().toString());
+                        k++;
+                    }
+                }
+                k = 0;
+                pipeline.setStageStatuses(stageStatuses);
+                //pipeline.setStages(stages); // Устанавливаем этапы пайплайна
             } else {
                 System.out.println("No matching workflow found for pipeline: " + pipeline.getName());
             }

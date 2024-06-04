@@ -52,7 +52,7 @@ public class RepositoriesController {
 
     @GetMapping("/repositories")
     public String getRepositories(Model model, @AuthenticationPrincipal OAuth2User oauth2User, OAuth2AuthenticationToken oAuth2AuthenticationToken, HttpSession httpSession) throws IOException {
-        System.out.println(oAuth2AuthenticationToken.getAuthorities().toString());
+        //System.out.println(oAuth2AuthenticationToken.getAuthorities().toString());
         String accessToken = getAccess_token(oAuth2AuthenticationToken, "github");
 
         httpSession.setAttribute("accessToken", accessToken);

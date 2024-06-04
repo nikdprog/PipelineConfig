@@ -30,33 +30,18 @@ public class HomeController {
         return "login";
     }
 
-    //@RequestMapping(value="/login", method=RequestMethod.POST)
     @PostMapping("/login")
     public String login(@RequestParam(name="username") String username,
                         @RequestParam(name="password") String password,
                         HttpSession httpSession) {
-        // Обработка логина
         System.out.println(username);
         System.out.println(password);
-        //httpSession.setAttribute("username", username);
         return "redirect:/"; // Перенаправление на главную страницу
     }
 
     @GetMapping("/")
     public String home(Model model, @AuthenticationPrincipal UserDetails userDetails, HttpSession httpSession) {
-        //model.addAttribute("username", principal);
-        //System.out.println(httpSession.getAttribute("username"));
         String username = userDetails.getUsername();
-
-        //System.out.println(username);
-        //Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        //UserDetails userDetails1;
-        //userDetails1 = (UserDetails) authentication.getDetails();
-        //System.out.println(userDetails1.getUsername());
-        //String email = ((CustomUserDetails) userDetails1).getEmail();
-        //System.out.println(userDetails1.getAuthorities());
-        //System.out.println(email);
-        //httpSession.setAttribute("userDetails", userDetails1.getUsername());
         httpSession.setAttribute("username", username);
         model.addAttribute("username", username);
         return "index";

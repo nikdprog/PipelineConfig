@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-    <title>View Repository</title>
+    <title>Просмотр проекта</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
     <style>
@@ -70,7 +70,7 @@
             border-radius: 3px;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
         }
 
         .pipeline-actions {
@@ -97,6 +97,15 @@
             background-color: #ff0000; /* Красный цвет для статуса "in_progress" */
         }
 
+        .loaderStage {
+            border: 4px solid #f3f3f3; /* Light grey */
+            border-top: 4px solid #d29922; /* yellow */
+            border-radius: 50%;
+            width: 23px;
+            height: 23px;
+            animation: spin 2s linear infinite;
+            margin-right: 2px;
+        }
 
         .loader1 {
             border: 16px solid #f3f3f3; /* Light grey */
@@ -158,11 +167,28 @@
            align-items: center;
         }
 
-        /* Убираем остальные стили, которые могли быть применены ранее */
         .complete::before {
-            content: "\2713"; /* Знак галочки */
+            content: "\2714"; /* Знак галочки */
             font-size: 24px;
             color: #fff; /* Белый цвет */
+        }
+
+
+        .completed-icon {
+            display: none;
+        }
+
+        .loaderStage {
+            display: none;
+        }
+
+        .pipeline-stage.completed .completed-icon {
+            display: inline-block;
+        }
+
+        .pipeline-stage.in_progress .loaderStage,
+        .pipeline-stage.queued .loaderStage {
+            display: inline-block;
         }
     </style>
 </head>
@@ -171,12 +197,12 @@
     <div class="container">
         <div class="navbar-header">
             <a class="navbar-brand">
-                Pipeline CI/CD configuration application</a>
+                Приложение для конфигурации CI/CD пайплайнов</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav navbar-right">
                 <li>
-                    <a th:href="@{/repositories}">Назад к проектам</a>
+                    <a th:href="@{/repositories}">Вернуться к проектам</a>
                 </li>
             </ul>
         </div>
@@ -190,18 +216,34 @@
     </form>
     <h2>Пайплайны проекта</h2>
     <div th:each="pipeline : ${pipelines}" class="pipelines-card">
-        <div class="loader"></div>
-        <div class="pipeline-info">
+        <div class="loader" th:id="'loader_' + ${pipeline.id}"></div>
+             <div class="pipeline-info">
             <div class="pipeline-name">
                 <a th:text="${pipeline.name}"></a>
             </div>
             <div class="pipeline-details">
-                <div class="pipeline-build" th:text="${pipeline.buildSystem}"></div>
+                <!--<div class="pipeline-build" th:text="${pipeline.buildSystem}"></div> -->
                 <div class="pipeline-status" th:id="'pipelineStatus_' + ${pipeline.id}" th:attr="data-idp=${pipeline.id}" th:text="${pipeline.status}" th:class="${pipeline.status}"></div>
             </div>
 
             <div class="pipeline-stages">
-                <div th:each="stage : ${pipeline.stages}" class="pipeline-stage" th:text="${stage}"></div>
+                <div th:each="stage : ${pipeline.stages}" th:id="'pipeline-stage_' + ${stage} + ${pipeline.id}" class="pipeline-stage">
+                    <svg class="completed-icon" style="color: rgb(11, 234, 78);" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 512 512"><title>ionicons-v5-e</title><path d="M256,48C141.31,48,48,141.31,48,256s93.31,208,208,208,208-93.31,208-208S370.69,48,256,48ZM218,360.38,137.4,270.81l23.79-21.41,56,62.22L350,153.46,374.54,174Z" fill="#0bea4e"></path></svg>
+                    <div class="loaderStage"></div>
+                    <!--
+                    <svg class="loaderStage" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="margin: auto; background: none; display: block;" width="25px" height="25px" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
+                        <circle cx="50" cy="50" r="32" stroke-width="8" stroke="#4fa94d" stroke-dasharray="50.26548245743669 50.26548245743669" fill="none" stroke-linecap="round">
+                            <animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur="1s" keyTimes="0;1" values="0 50 50;360 50 50"></animateTransform>
+                        </circle>
+                    </svg>
+                    -->
+                    <span th:text="${stage}"></span>
+                </div>
+                <span th:text="${stage}"></span>
+                <svg class="completed-icon" width="16" height="16" viewBox="0 0 16 16" version="1.1" role="img">
+                    <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16Zm3.78-9.72a.751.751 0 0 0-.018-1.042.751.751 0 0 0-1.042-.018L6.75 9.19 5.28 7.72a.751.751 0 0 0-1.042.018.751.751 0 0 0-.018 1.042l2 2a.75.75 0 0 0 1.06 0Z"></path>
+                </svg>
+                <svg class="completed-icon" style="color: rgb(11, 234, 78);" xmlns="http://www.w3.org/2000/svg" width="61" height="61" viewBox="0 0 512 512"><title>ionicons-v5-e</title><path d="M256,48C141.31,48,48,141.31,48,256s93.31,208,208,208,208-93.31,208-208S370.69,48,256,48ZM218,360.38,137.4,270.81l23.79-21.41,56,62.22L350,153.46,374.54,174Z" fill="#0bea4e"></path></svg>
             </div>
         </div>
         <div class="pipeline-actions">
@@ -268,18 +310,6 @@
                         <label for="pipelineTextEdit">Текст пайплайна:</label>
                         <textarea class="form-control" id="pipelineTextEdit" rows></textarea>
                     </div>
-                    <!--
-                    <div class="form-group">
-                        <label for="trigger">Trigger:</label>
-                        <input type="text" class="form-control" id="triggerEdit">
-                    </div>
-                    <div class="form-group">
-                        <label>Stages:</label><br>
-                        <label><input type="checkbox" name="stagesEdit" value="build"> Build</label><br>
-                        <label><input type="checkbox" name="stagesEdit" value="test"> Test</label><br>
-                        <label><input type="checkbox" name="stagesEdit" value="deploy"> Deploy</label>
-                    </div>
-                    -->
                 </form>
             </div>
             <div class="modal-footer">
@@ -486,6 +516,7 @@
                 console.log('Pipeline deleted successfully!');
                 // Обновляем страницу для отображения обновленного списка пайплайнов
                 location.reload();
+
             },
             error: function(xhr, status, error) {
                 // Обработка ошибок
@@ -497,11 +528,8 @@
 
 
     function updateAllPipelineStatus() {
-        //console.log('pipelineID:' + pipelineId);
         $('.pipelines-card').each(function() {
-            //var element = document.querySelector('[data-idp]'); // +
             var pipelineId = $(this).find('[data-idp]').data('idp');
-            //var pipelineId = element.dataset.idp; // +
             console.log(pipelineId);
             updatePipelineStatus(pipelineId);
         });
@@ -521,22 +549,40 @@
             success: function(response) {
                 // Обновление статуса пайплайна на странице
                 console.log('status: ' + response.status)
-                $('#pipelineStatus_' + pipelineId).text(response.status);
-                //var iconElement = $('#pipelineStatus_' + pipelineId + '.icon');
-                var iconElement = $('.loader');
-                iconElement.removeClass(); // Удаление всех классов иконки
-                if (response.status === 'queued' || response.status === 'in_progress') {
+
+                //$('#pipelineStatus_' + pipelineId).text(response.status);
+                var iconElement = $('#loader_' + pipelineId);
+
+                if (response.status === 'completed') {
+                    $('#pipelineStatus_' + pipelineId).text('Завершено');
                     iconElement.removeClass(); // Удаление всех классов иконки
-                    iconElement.addClass('loader1'); // Иконка круга загрузки
-                } else if (response.status === 'completed') {
-                    iconElement.removeClass(); // Удаление всех классов иконки
-                    console.log('not updates')
                     iconElement.addClass('complete');
-                    //iconElement.addClass('fas fa-check-circle'); // Иконка галочки
+                } else if (response.status === 'queued' || response.status === 'in_progress') {
+                    if(response.status === 'queued') {
+                         $('#pipelineStatus_' + pipelineId).text('В очереди');
+                    }
+                    if(response.status === 'in_progress') {
+                        $('#pipelineStatus_' + pipelineId).text('В процессе');
+                    }
+                    iconElement.addClass('loader1');
                 }
 
-                //$('#pipelineStatus').text(response.status);
-            },
+                // Обновление статусов этапов
+                $.each(response.stageStatuses, function(stage, status) {
+                    console.log(stage + ' : ' + status)
+                    var stageElement = $('#pipeline-stage_' + stage + pipelineId)
+                    if(status === 'completed') {
+                        stageElement.removeClass('queued');
+                        stageElement.removeClass('in_progress');
+                        stageElement.addClass('completed');
+                    } else if(status === 'queued' || status === 'in_progress') {
+                        stageElement.addClass(status);
+                    }
+                    else {
+                        console.log('failed')
+                    }
+                });
+                },
             error: function(xhr, status, error) {
                 // Обработка ошибок
                 console.error('Error while updating pipeline status:', error);
@@ -547,28 +593,6 @@
     $(document).ready(function() {
         setInterval(updateAllPipelineStatus, 500);
      });
-
-    function updateStagesInformation(pipelineId) {
-        console.log('updatePipelineStatus');
-        var repositoryName = $('#span1').text();
-        var pipelineName = $('#pipelineName').val();
-        $.ajax({
-            url: '/getPipeline', // Укажите URL вашего эндпоинта для получения статуса пайплайна
-            type: 'GET',
-            data: {
-                pipelineId: pipelineId,
-                repositoryName: repositoryName,
-            },
-            success: function(response) {
-
-
-            },
-            error: function(xhr, status, error) {
-                // Обработка ошибок
-                console.error('Error while updating pipeline status:', error);
-            }
-        });
-    }
 
 </script>
 </body>

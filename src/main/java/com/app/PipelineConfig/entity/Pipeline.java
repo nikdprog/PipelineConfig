@@ -3,6 +3,9 @@ package com.app.PipelineConfig.entity;
 
 import jakarta.persistence.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Entity
 @Table(name="pipelines")
 public class Pipeline {
@@ -31,8 +34,18 @@ public class Pipeline {
     @Column(name="stages")
     private String[] stages;
 
+    @Transient
+    private Map<String, String> stageStatuses = new HashMap<>();
+
     @Column(name="status")
     private String status;
+
+    public void setStageStatuses(Map<String,String> stageStatuses) {
+        this.stageStatuses = stageStatuses;
+    }
+    public Map<String, String> getStageStatuses() {
+        return stageStatuses;
+    }
 
     public void setStatus(String status) {
         this.status = status;
